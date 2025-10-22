@@ -8,6 +8,7 @@ export default function Profile() {
   const { token, user, setUser, logout } = useAuthStore();
   const [editing, setEditing] = useState(false);
   const [nameUpdate, setNameUpdate] = useState("");
+  const [loading, setLoading] = useState("false");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,7 +29,10 @@ export default function Profile() {
   }, [token]);
 
   function handleLogout() {
+    setLoading("true");
     logout();
+    if (!token) return toast.success("Log Out Succesfully");
+    setLoading("false");
     navigate("/login");
   }
 
@@ -51,7 +55,8 @@ export default function Profile() {
     setEditing(false);
   }
 
-  if (!user) return <div className="text-center mt-20 text-gray-600">Loading...</div>;
+  if (!user)
+    return <div className="text-center mt-20 text-gray-600">Loading...</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center py-12 px-4">
@@ -92,71 +97,91 @@ export default function Profile() {
             {/* Profile Information */}
             <div className="space-y-4 pt-4 border-t border-gray-200">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-600">Account Type</span>
+                <span className="text-sm font-medium text-gray-600">
+                  Account Type
+                </span>
                 <span className="text-sm text-gray-900 font-medium bg-gray-100 px-3 py-1 rounded-full">
                   {user.account_type}
                 </span>
               </div>
 
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-600">Subscription Status</span>
-                <span className={`text-sm font-medium px-3 py-1 rounded-full ${
-                  user.subscription_status === 'active' 
-                    ? 'bg-green-100 text-green-700' 
-                    : 'bg-gray-100 text-gray-700'
-                }`}>
+                <span className="text-sm font-medium text-gray-600">
+                  Subscription Status
+                </span>
+                <span
+                  className={`text-sm font-medium px-3 py-1 rounded-full ${
+                    user.subscription_status === "active"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-100 text-gray-700"
+                  }`}
+                >
                   {user.subscription_status}
                 </span>
               </div>
 
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-600">Subscription Expires</span>
+                <span className="text-sm font-medium text-gray-600">
+                  Subscription Expires
+                </span>
                 <span className="text-sm text-gray-900">
                   {user.subscription_expires_on
-                    ? new Date(user.subscription_expires_on).toLocaleDateString()
+                    ? new Date(
+                        user.subscription_expires_on
+                      ).toLocaleDateString()
                     : "-"}
                 </span>
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-3 pt-6">
-              {editing ? (
-                <>
-                  <button
-                    onClick={handleSave}
-                    disabled={nameUpdate === user.name}
-                    className={`flex-1 py-2.5 rounded-md font-medium transition-colors ${
-                      nameUpdate === user.name
-                        ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                        : "bg-green-600 text-white hover:bg-green-700"
-                    }`}
-                  >
-                    Save Changes
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="flex-1 py-2.5 rounded-md bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => setEditing(true)}
-                    className="flex-1 py-2.5 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
-                  >
-                    Edit Profile
-                  </button>
-                  <button
-                    onClick={handleLogout}
-                    className="px-6 py-2.5 rounded-md bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition-colors"
-                  >
-                    Logout
-                  </button>
-                </>
-              )}
+            <div className="flex flex-col gap-3 pt-6">
+              <div className="flex gap-3">
+                {editing ? (
+                  <>
+                    <button
+                      onClick={handleSave}
+                      disabled={nameUpdate === user.name}
+                      className={`flex-1 py-2.5 rounded-md font-medium transition-colors ${
+                        nameUpdate === user.name
+                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          : "bg-green-600 text-white hover:bg-green-700"
+                      }`}
+                    >
+                      Save Changes
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      className="flex-1 py-2.5 rounded-md bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => setEditing(true)}
+                      className="flex-1 py-2.5 rounded-md bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
+                    >
+                      Edit Profile
+                    </button>
+                    <button
+                      onClick={handleLogout}
+                      className="px-6 py-2.5 rounded-md bg-gray-200 text-gray-700 font-medium hover:bg-gray-300 transition-colors"
+                    >
+                      {loading ? "Logging out..." : "Logout"}
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/*Go to Chat Button */}
+              <button
+                onClick={() => navigate("/chat")}
+                className="w-full py-2.5 rounded-md bg-purple-600 text-white font-medium hover:bg-purple-700 transition-colors"
+              >
+                💬 Go to Chat
+              </button>
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import { useAuthStore } from "./store/useAuthStore";
 import { ToastContainer } from "react-toastify";
+import ChatPage from "./pages/Chat";
 
 export default function App() {
   const token = useAuthStore((s) => s.token);
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/chat" element={<ChatPage></ChatPage>}/>
       </Routes>
     </BrowserRouter>
   );
